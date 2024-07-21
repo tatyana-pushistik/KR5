@@ -1,24 +1,23 @@
-import configparser
+from configparser import ConfigParser
 import os
-from config import ROOT_DIR
 
-file_path = os.path.join(ROOT_DIR, 'data', 'database.ini')
-
-def connect():
-    config_BD = {}
-    config = configparser.ConfigParser()
-    config.read(file_path)
+# текущая папка
+ROOT_DIR = os.path.dirname(__file__)
 
 
-    host = config['postgresql']['host']
-    port = config['postgresql']['port']
-    user = config['postgresql']['user']
-    password = config['postgresql']['password']
-
-    config_BD['host'] = host
-    config_BD['port'] = port
-    config_BD['user'] = user
-    config_BD['password'] = password
-
-    return config_BD
+# конфиг для БД
+def config(filename="database.ini", section="postgresql"):
+    # create a parser
+    parser = ConfigParser()
+    # read config file
+    parser.read(filename)
+    db = {}
+    if parser.has_section(section):
+        params = parser.items(section)
+        for param in params:
+            db[param[0]] = param[1]
+    else:
+        raise Exception(
+            'Section {0} is not found in the {1} file.'.format(section, filename))
+    return db
 

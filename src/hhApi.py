@@ -2,15 +2,15 @@ import requests
 
 def get_employers_data():
     employer_data = {
-        'Альфа - Банк': 80,
-        # 'Яндекс': 1740,
-        # 'ВТБ': 4181,
-        # 'Tele2': 4219,
-        # 'МТС': 3776,
-        # 'Газпромбанк': 3388,
-        # 'МегаФон': 3127,
-        # 'X5 Group': 4233,
-        # 'Сбербанк': 3529,
+         'Альфа - Банк': 80,
+         'Яндекс': 1740,
+         'ВТБ': 4181,
+         'Tele2': 4219,
+         'МТС': 3776,
+         'Газпромбанк': 3388,
+         'МегаФон': 3127,
+         'X5 Group': 4233,
+         'Сбербанк': 3529,
          'Аэрофлот': 1373
     }
 
@@ -18,7 +18,7 @@ def get_employers_data():
 
     for company_name, company_id in employer_data.items():
         company_url = f"https://hh.ru/employer/{company_id}"
-        company_info = {'company_id': company_id, 'company_name': company_name, 'company_url': company_url}
+        company_info = {'company_id': company_id, 'company_name': company_name}
         data_employers.append(company_info)
     return data_employers
 
@@ -36,37 +36,40 @@ def get_vacancies(data):
 
             for item in vacancies_data:
                 company_id = item['employer']['id']
-                company = item['employer']['name']
-                company_url = item['employer']['url']
+                id_vac = item['id']
+                company_name = item['employer']['name']
                 job_title = item['name']
                 link_to_vacancy = item['employer']['alternate_url']
                 salary = item['salary']
-                currency = ''
+                city = item['area']['name']
                 salary_from = 0
+                salary_to = 0
 
                 if salary:
                     salary_from = salary['from'] or 0
-                    currency = salary['currency'] or ''
+                    salary_to = salary['to'] or 0
+
 
                 description = item['snippet']['responsibility']
-                requirement = item['snippet']['requirement']
 
                 vacancies.append({
                     "company_id": company_id,
-                    "company_name": company,
-                    "company_url": company_url,
+                    "id_vac": id_vac,
+                    "company_name": company_name,
                     "job_title": job_title,
                     "link_to_vacancy": link_to_vacancy,
                     "salary_from": salary_from,
-                    "currency": currency,
-                    "description": description,
-                    "requirement": requirement
+                    "salary_to": salary_to,
+                    "city": city,
+                    "description": description
+
                 })
         else:
             print(f"Ошибка запроса API для компании  {company_data['company_name']}: {response.status_code}")
 
     return vacancies
 
-
-
+# data = get_employers_data()
+# data2 = get_vacancies(data)
+# print(data2)
 
